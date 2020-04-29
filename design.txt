@@ -1,0 +1,23 @@
+The main code is in class Check, it extend RecursiveAction which can invoke multiple threads, recursively run compute() 
+
+1. private final NFA nfa;
+It is NFA object
+
+2. private String query;
+It is String we need to check whether matches the NFA.
+
+3.private Object state;
+It is the current state.
+
+4. public static AtomicBoolean found =  new AtomicBoolean();
+The static AtomicBoolean found represents the NFA object exploring result. If it is true, the string matches the parser. Else, it doesn’t match.
+
+5. @Override compute()
+First check wether found is not true. If it is not true, we have not found a match case yet and need more explore. Else, we have found one and do not need more explore.
+ 
+Explore steps:
+If  query  is “” and state is in final_states set, we found one match case and set found true.
+Else found all possible next statues and create new Check object for each one. Invoke all, using multiple threads to explore NFA and all threads share the static AtomicBoolean found. 
+
+6. boolean match(String s, int nthreads) in class NFA
+Create new ForkJoinPool to execute threads and first invoke a check object for startState. After, computation, Check.found.get() shows the result of explore.
