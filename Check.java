@@ -5,7 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RecursiveTask;
 
-    public class Check extends RecursiveAction {
+public class Check extends RecursiveAction {
     private final NFA nfa;
     private String query;
     private Object state;
@@ -15,6 +15,13 @@ import java.util.concurrent.RecursiveTask;
         this.nfa = nfa;
         query = s;
         state = t;
+    }
+
+    Check(NFA nfa, String s, Object t, LinkedBlockingQueue q) {
+        this.nfa = nfa;
+        query = s;
+        state = t;
+        queue = q;
     }
 
 
@@ -59,4 +66,3 @@ import java.util.concurrent.RecursiveTask;
         }
     }
 }
-
