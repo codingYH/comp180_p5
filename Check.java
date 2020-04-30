@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLongArray;
@@ -32,6 +33,7 @@ public class Check extends RecursiveAction {
             discovered.add(query + state);
             if (query.isEmpty() && nfa.final_states().contains(state)) {
                 found.set(true);
+                ForkJoinPool.commonPool().shutdown();
             } else {
                 List<Map.Entry<String, Object>> result = new ArrayList<>();
                 List<Map.Entry<Character, Object>> trans = nfa.transition(state);
@@ -70,7 +72,6 @@ public class Check extends RecursiveAction {
                         }
                     }
                 }
-
             }
         }
     }
