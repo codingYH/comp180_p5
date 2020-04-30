@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class Check extends RecursiveAction {
                 } else {
                     for (Map.Entry e : trans) {
                         if (e.getKey().equals('#')) {
-                            result.add(e);
+                            result.add(Map.entry("#", e.getValue()));
                         }
                     }
                 }
