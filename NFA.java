@@ -1,6 +1,8 @@
 import javax.lang.model.element.UnknownElementException;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class NFA {
   private static int i;
@@ -8,6 +10,7 @@ public class NFA {
   private List<Object> finalStates = new ArrayList<>();
   private List<Object> states = new ArrayList<>();
   private HashMap<Object, List<Map.Entry<Character, Object>>> transitions = new HashMap<>();
+  private static Lock lock = new ReentrantLock();
 
   NFA() {
     makeStart();
@@ -112,15 +115,11 @@ public class NFA {
   }
 
   boolean match(String s, int nthreads) {
-    ForkJoinPool pool = new ForkJoinPool(nthreads);
-    pool.invoke(new Check(this, s, startState, false));
-    /*while (!pool.isQuiescent()){
-      if (Check.found.get()){
-        pool.shutdown();
-        return true;
-      }
-    }*/
-    pool.shutdown();
-    return Check.found.get();
+    synchronized (this){
+      ForkJoinPool pool = new ForkJoinPool(nthreads);
+      pool.invoke(new Check(this, s, startState, false));
+      pool.shutdown();
+      return Check.found.get();
+    }
   }
 }
