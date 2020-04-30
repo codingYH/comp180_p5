@@ -7,6 +7,6 @@ public class NFATest {
         Parser p = new Parser("(a*b*)*");
         Regex r = p.parse();
         NFA nfa = new NFA(r);
-        Assert.assertFalse(nfa.match("ababababababababababababababababababababababac", 4));
+        Assert.assertTrue(nfa.match("ababababababababababababababababababababababa", 4));
     }
 }

@@ -53,6 +53,7 @@ public class Check extends RecursiveTask<Boolean> {
                         List<Check> cl = new ArrayList<>();
                         for (Map.Entry r : result) {
                             Check c = new Check(nfa, (String) r.getKey(), r.getValue());
+                            cl.add(c);
                         }
                         invokeAll(cl);
                         boolean b = false;
@@ -62,8 +63,8 @@ public class Check extends RecursiveTask<Boolean> {
                         return b;
                     }else
                         return false;
-                }
-                return false;
+                }else
+                    return false;
             }
     }
 }
