@@ -10,7 +10,7 @@ public class Check extends RecursiveAction {
     private String query;
     private Object state;
     public static AtomicBoolean found =  new AtomicBoolean();
-    public static HashSet<String> discovered = new HashSet<>();
+    public volatile static HashSet<String> discovered = new HashSet<>();
 
     Check(NFA nfa, String s, Object t, boolean f) {
         this.nfa = nfa;

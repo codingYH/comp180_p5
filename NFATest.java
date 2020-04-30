@@ -7,7 +7,9 @@ public class NFATest {
         Parser p = new Parser("(a*b*)*");
         Regex r = p.parse();
         NFA nfa = new NFA(r);
-        Assert.assertFalse(nfa.match("ababababababababababababababababababababababababababc", 4));
+        Assert.assertFalse(nfa.match("ababababababababababababababababababababababababababababababababababababababababababababababababababababc", 4));
+        Assert.assertTrue(nfa.match("abababababababababababababababababababbababababababababababababababababababababababababababababababab", 4));
+        Assert.assertTrue(nfa.match("", 4));
     }
 
     @Test
@@ -15,7 +17,7 @@ public class NFATest {
         Parser p2 = new Parser("(a|b)*c");
         Regex r2 = p2.parse();
         NFA nfa2 = new NFA(r2);
-        Assert.assertTrue(nfa2.match("abc", 4));
-        Assert.assertFalse(nfa2.match("aca", 4));
+        Assert.assertTrue(nfa2.match("abababababababababababc", 4));
+        Assert.assertFalse(nfa2.match("aababababababababaca", 4));
     }
 }
