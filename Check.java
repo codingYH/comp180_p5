@@ -40,15 +40,11 @@ public class Check extends RecursiveAction {
                         if (e.getKey().equals(query.charAt(0))) {
                             String key = query.substring(1, query.length());
                             Object value = e.getValue();
-                            if(discovered.contains(key + value) == false){
-                                result.add(Map.entry(key, value));
-                            }
+                            result.add(Map.entry(key, value));
                         } else if (e.getKey().equals('#')) {
                             String key = query;
                             Object value = e.getValue();
-                            if(discovered.contains(key + value) == false){
-                                result.add(Map.entry(key, value));
-                            }
+                            result.add(Map.entry(key, value));
                         }
                     }
                 } else {
@@ -56,17 +52,17 @@ public class Check extends RecursiveAction {
                         if (e.getKey().equals('#')) {
                             String key = query;
                             Object value = e.getValue();
-                            if(discovered.contains(key + value) == false){
-                                result.add(Map.entry(key, value));
-                            }
+                            result.add(Map.entry(key, value));
                         }
                     }
                 }
                 if (!result.isEmpty()) {
                     List<Check> cl = new ArrayList<>();
                     for (Map.Entry r : result) {
-                        Check c = new Check(nfa, (String) r.getKey(), r.getValue());
-                        cl.add(c);
+                        if(discovered.contains((String) r.getKey() + r.getValue()) == false){
+                            Check c = new Check(nfa, (String) r.getKey(), r.getValue());
+                            cl.add(c);
+                        }
                     }
                     invokeAll(cl);
                 }
