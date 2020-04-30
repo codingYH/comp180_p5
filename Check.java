@@ -59,12 +59,14 @@ public class Check extends RecursiveAction {
                     if (!result.isEmpty()) {
                         List<Check> cl = new ArrayList<>();
                         for (Map.Entry r : result) {
-                            if(discovered.contains((String) r.getKey() + r.getValue()) == false){
+                            if(discovered.contains((String) r.getKey() + r.getValue()) == false ){
                                 Check c = new Check(nfa, (String) r.getKey(), r.getValue());
                                 cl.add(c);
                             }
                         }
-                        invokeAll(cl);
+                        if (!found.get()){
+                            invokeAll(cl);
+                        }
                     }
                 }
 
