@@ -48,10 +48,12 @@ public class Check extends RecursiveAction {
                     }
                 }
                 if (!result.isEmpty()) {
+                    List<Check> cl = new ArrayList<>();
                     for (Map.Entry r : result) {
                         Check c = new Check(nfa, (String) r.getKey(), r.getValue());
-                        invokeAll(c);
+                        cl.add(c);
                         }
+                    invokeAll(cl);
                     }
                 }
             }
