@@ -13,7 +13,7 @@ public class NFA {
     makeStart();
   }
 
-  void makeStart(){
+  void makeStart() {
     startState = i++;
     states.add(startState);
   }
@@ -28,12 +28,12 @@ public class NFA {
     if (start == null || end == null ||
             !states.contains(start) || !states.contains(end)) {
       throw new UnsupportedOperationException("states don't exist!");
-    } else if ( (c < 'a' || c > 'z') && c != '#') {
+    } else if ((c < 'a' || c > 'z') && c != '#') {
       throw new UnsupportedOperationException("character " + c + " don't support!");
     } else {
       Map.Entry<Character, Object> t = Map.entry(c, end);
       List<Map.Entry<Character, Object>> trans = transitions.get(start);
-      if(trans == null){
+      if (trans == null) {
         trans = new ArrayList<>();
       }
       trans.add(t);
@@ -77,8 +77,8 @@ public class NFA {
       states.addAll(r.states);
       transitions.putAll(l.transitions);
       transitions.putAll(r.transitions);
-      for (Object o : l.finalStates){
-        newTransition(o, '#',r.startState);
+      for (Object o : l.finalStates) {
+        newTransition(o, '#', r.startState);
       }
     }
     if (re instanceof RStar) {
@@ -89,7 +89,7 @@ public class NFA {
       states.addAll(n.states);
       transitions.putAll(n.transitions);
       newTransition(startState, '#', n.startState);
-      for(Object o : n.finalStates){
+      for (Object o : n.finalStates) {
         newTransition(o, '#', startState);
       }
     }
@@ -113,18 +113,6 @@ public class NFA {
 
   boolean match(String s, int nthreads) {
     ForkJoinPool pool = new ForkJoinPool(nthreads);
-    pool.invoke(new Check(this, s, startState, new LinkedBlockingQueue()));
-
-//    while(!pool.isQuiescent()){
-//      if (Check.found.get() == true){
-//        pool.shutdown();
-//        return Check.found.get();
-//      }
-//    }
-    pool.shutdown();
-    if (Check.queue.peek() != null){
-      return (boolean) Check.queue.peek();
-    }
-    return false;
+    return pool.invoke(new Check(this, s, startState));
   }
 }
