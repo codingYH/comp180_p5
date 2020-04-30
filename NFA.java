@@ -113,14 +113,18 @@ public class NFA {
 
   boolean match(String s, int nthreads) {
     ForkJoinPool pool = new ForkJoinPool(nthreads);
-    pool.invoke(new Check(this, s, startState, false));
-    while(!pool.isQuiescent()){
-      if (Check.found.get() == true){
-        pool.shutdown();
-        return Check.found.get();
-      }
-    }
+    pool.invoke(new Check(this, s, startState));
+
+//    while(!pool.isQuiescent()){
+//      if (Check.found.get() == true){
+//        pool.shutdown();
+//        return Check.found.get();
+//      }
+//    }
     pool.shutdown();
-    return Check.found.get();
+    if (Check.queue.peek() != null){
+      return (boolean) Check.queue.peek();
+    }
+    return false;
   }
 }
