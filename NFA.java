@@ -1,6 +1,6 @@
 import javax.lang.model.element.UnknownElementException;
 import java.util.*;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 
 public class NFA {
   private static int i;
@@ -113,13 +113,13 @@ public class NFA {
 
   boolean match(String s, int nthreads) {
     ForkJoinPool pool = new ForkJoinPool(nthreads);
-    pool.execute(new Check(this, s, startState, false));
-    while(!pool.isQuiescent()){
-      if (Check.found.get() == true){
-        pool.shutdown();
-        return true;
-      }
-    }
+    pool.invoke(new Check(this, s, startState, false));
+//    while(!pool.isTerminated()){
+//      if (Check.found.get() == true){
+//        pool.shutdown();
+//        return Check.found.get();
+//      }
+//    }
     pool.shutdown();
     return Check.found.get();
   }
