@@ -118,9 +118,14 @@ public class NFA {
 //    lock.lock();
     ForkJoinPool pool = new ForkJoinPool(nthreads);
     pool.invoke(new Check(this, s, startState, false, pool));
-    pool.shutdown();
+    /*if (pool.isTerminated()) {
+      return true;
+    } else {
+      pool.shutdown();
+      return false;
+    }*/
     boolean r =  Check.found.get();
 //    lock.unlock();
     return r;
     }
-}
+  }

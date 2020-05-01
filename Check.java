@@ -13,7 +13,7 @@ public class Check extends RecursiveAction {
     private Object state;
     private static ForkJoinPool pool;
     public static AtomicBoolean found =  new AtomicBoolean();
-    public volatile static HashSet<String> discovered = new HashSet<>();
+    public static HashSet<String> discovered = new HashSet<>();
 
     Check(NFA nfa, String s, Object t, boolean f, ForkJoinPool p) {
         this.nfa = nfa;
@@ -32,9 +32,11 @@ public class Check extends RecursiveAction {
     @Override
     protected void compute() {
         if (!found.get()) {
+            System.out.println(pool.getRunningThreadCount()+query);
             discovered.add(query + state);
             if (query.isEmpty() && nfa.final_states().contains(state)) {
                 found.set(true);
+                System.out.println("find!!!!!");
                 pool.shutdown();
             } else {
                 List<Map.Entry<String, Object>> result = new ArrayList<>();
