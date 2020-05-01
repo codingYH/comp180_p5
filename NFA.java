@@ -116,23 +116,10 @@ public class NFA {
     return transitions.get(state);
   }
 
-  boolean match(String s, int nthreads) {
-//    lock.lock();
+  synchronized boolean match(String s, int nthreads) {
     ForkJoinPool pool = new ForkJoinPool(nthreads);
-//    while (Check.found != null){
-//      try {
-//        c.await();
-//      } catch (InterruptedException e) {
-//        e.printStackTrace();
-//      }
-//    }
     pool.invoke(new Check(this, s, startState, pool, false));
-    boolean r = Check.found.get();
-//    Check.found = null;
-//    c.signalAll();
-//    lock.unlock();
-//    pool.shutdown();
-    return r;
+    return Check.found.get();
   }
 
 }

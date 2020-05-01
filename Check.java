@@ -14,8 +14,8 @@ public class Check extends RecursiveAction {
     private Object state;
     private static ForkJoinPool pool;
     public static AtomicBoolean found;
-    public static LinkedBlockingQueue<String> discovered = new LinkedBlockingQueue<>();
-    private static LinkedBlockingQueue<Check> cl = new LinkedBlockingQueue<>();
+    public static LinkedBlockingQueue<String> discovered;
+    private static LinkedBlockingQueue<Check> cl;
 
     Check(NFA nfa, String s, Object t, ForkJoinPool p, boolean b) {
         this.nfa = nfa;
@@ -23,6 +23,7 @@ public class Check extends RecursiveAction {
         state = t;
         pool = p;
         found = new AtomicBoolean(b);
+        discovered = new LinkedBlockingQueue<>();
         cl = new LinkedBlockingQueue<>();
     }
 
@@ -77,7 +78,7 @@ public class Check extends RecursiveAction {
                 }
             }
             long in = System.currentTimeMillis();
-            while(cl.size() <= 1 && pool.getActiveThreadCount() > 1 && System.currentTimeMillis() - in <= 5);
+//            while(cl.size() <= 1 && pool.getActiveThreadCount() > 1 && System.currentTimeMillis() - in <= 5);
 //            while(cl.size() <= 1 && pool.getRunningThreadCount() > 1&& System.currentTimeMillis() - in <= 70);
             consume();
         }
