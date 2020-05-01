@@ -63,12 +63,15 @@ public class Check extends RecursiveTask<Boolean> {
                     }
                 }
             }
-            invokeAll(checks);
-            boolean result = false;
-            for (Check check: checks){
-                result = result || check.join();
-            }
-            return result;
+            if (!checks.isEmpty()){
+                invokeAll(checks);
+                boolean result = false;
+                for (Check check: checks){
+                    result = result || check.join();
+                }
+                return result;
+            }else
+                return false;
         }
     }
 }
