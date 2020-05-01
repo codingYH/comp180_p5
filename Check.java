@@ -31,6 +31,7 @@ public class Check extends RecursiveTask<Boolean> {
         if (query.isEmpty() && nfa.final_states().contains(state)) {
             return true;
         } else {
+            boolean result = false;
             List<Map.Entry<Character, Object>> trans = nfa.transition(state);
             if (trans != null) {
                 if (!query.isEmpty()) {
@@ -40,12 +41,18 @@ public class Check extends RecursiveTask<Boolean> {
                             if (!discovered.contains(key)){
                                 discovered.add(key);
                                 queue.add(key);
+                                Check next = new Check(nfa, discovered, queue);
+                                invokeAll(next);
+                                result = result || next.join();
                             }
                         } else if (e.getKey().equals('#')) {
                             String key = query +"!" + e.getValue();
                             if (!discovered.contains(key)){
                                 discovered.add(key);
                                 queue.add(key);
+                                Check next = new Check(nfa, discovered, queue);
+                                invokeAll(next);
+                                result = result || next.join();
                             }
                         }
                     }
@@ -56,14 +63,15 @@ public class Check extends RecursiveTask<Boolean> {
                             if (!discovered.contains(key)){
                                 discovered.add(key);
                                 queue.add(key);
+                                Check next = new Check(nfa, discovered, queue);
+                                invokeAll(next);
+                                result = result || next.join();
                             }
                         }
                     }
                 }
             }
-            Check next = new Check(nfa, discovered, queue);
-            invokeAll(next);
-            return next.join();
+            return result;
         }
     }
 }
