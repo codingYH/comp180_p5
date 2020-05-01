@@ -120,10 +120,6 @@ public class NFA {
     ForkJoinPool pool = new ForkJoinPool(nthreads);
     LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>();
     queue.add(s+"!"+startState);
-//    Check c = new Check(this, new LinkedBlockingQueue<String>() , queue);
-//    boolean r = pool.invoke(c);
-//    System.out.println(pool.getRunningThreadCount());
-//    return r;
     return pool.invoke(new Check(this, new LinkedBlockingQueue<>() , queue));
   }
 }
