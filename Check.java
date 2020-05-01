@@ -11,14 +11,16 @@ public class Check extends RecursiveAction {
     private final NFA nfa;
     private String query;
     private Object state;
+    private static ForkJoinPool pool;
     public static AtomicBoolean found =  new AtomicBoolean();
     public volatile static HashSet<String> discovered = new HashSet<>();
 
-    Check(NFA nfa, String s, Object t, boolean f) {
+    Check(NFA nfa, String s, Object t, boolean f, ForkJoinPool p) {
         this.nfa = nfa;
         query = s;
         state = t;
         found = new AtomicBoolean(f);
+        pool = p;
     }
 
     Check(NFA nfa, String s, Object t) {
@@ -33,7 +35,7 @@ public class Check extends RecursiveAction {
             discovered.add(query + state);
             if (query.isEmpty() && nfa.final_states().contains(state)) {
                 found.set(true);
-                ForkJoinPool.commonPool().shutdown();
+                pool.shutdown();
             } else {
                 List<Map.Entry<String, Object>> result = new ArrayList<>();
                 List<Map.Entry<Character, Object>> trans = nfa.transition(state);

@@ -116,8 +116,8 @@ public class NFA {
 
   boolean match(String s, int nthreads) {
 //    lock.lock();
-    ForkJoinPool pool = ForkJoinPool.commonPool();
-    pool.invoke(new Check(this, s, startState, false));
+    ForkJoinPool pool = new ForkJoinPool(nthreads);
+    pool.invoke(new Check(this, s, startState, false, pool));
     pool.shutdown();
     boolean r =  Check.found.get();
 //    lock.unlock();
