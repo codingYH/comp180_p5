@@ -1,8 +1,13 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLongArray;
 
 public class Check extends RecursiveTask<Boolean> {
     private final NFA nfa;
@@ -63,15 +68,12 @@ public class Check extends RecursiveTask<Boolean> {
                     }
                 }
             }
-            if (!checks.isEmpty()){
-                invokeAll(checks);
-                boolean result = false;
-                for (Check check: checks){
-                    result = result || check.join();
-                }
-                return result;
-            }else
-                return false;
+            invokeAll(checks);
+            boolean result = false;
+            for (Check check: checks){
+                result = result || check.join();
+            }
+            return result;
         }
     }
 }
