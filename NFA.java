@@ -116,10 +116,10 @@ public class NFA {
     return transitions.get(state);
   }
 
-  synchronized boolean match(String s, int nthreads) {
+  boolean match(String s, int nthreads) {
     ForkJoinPool pool = new ForkJoinPool(nthreads);
-    pool.invoke(new Check(this, s, startState, pool, false));
-    return Check.found.get();
+    LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    queue.add(s+"!"+startState);
+    return pool.invoke(new Check(this, new LinkedBlockingQueue<String>() , queue));
   }
-
 }
