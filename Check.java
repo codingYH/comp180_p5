@@ -13,34 +13,30 @@ public class Check extends RecursiveAction {
     private String query;
     private Object state;
     private static ForkJoinPool pool;
-//    public static AtomicBoolean found = new AtomicBoolean();
+    public static AtomicBoolean found;
     public static LinkedBlockingQueue<String> discovered = new LinkedBlockingQueue<>();
     private static LinkedBlockingQueue<Check> cl = new LinkedBlockingQueue<>();
-//    private int nthread;
 
     Check(NFA nfa, String s, Object t, ForkJoinPool p, boolean b) {
         this.nfa = nfa;
         query = s;
         state = t;
-//        found = new AtomicBoolean(f);
         pool = p;
-        nfa.setResult(b);
-//        nthread = n;
+        found = new AtomicBoolean(b);
     }
 
     Check(NFA nfa, String s, Object t) {
         this.nfa = nfa;
         query = s;
         state = t;
-//        nthread = n;
     }
 
     @Override
     protected void compute() {
         discovered.add(query + state);
         if (query.isEmpty() && nfa.final_states().contains(state)) {
-            nfa.setResult(true);
             System.out.println("find!!!!!");
+            found.set(true);
             pool.shutdown();
         } else {
             List<Map.Entry<String, Object>> result = new ArrayList<>();
