@@ -13,33 +13,33 @@ public class Check extends RecursiveAction {
     private String query;
     private Object state;
     private static ForkJoinPool pool;
-    public static AtomicBoolean found = new AtomicBoolean();
-    //    public static HashSet<String> discovered = new HashSet<>();
+//    public static AtomicBoolean found = new AtomicBoolean();
     public static LinkedBlockingQueue<String> discovered = new LinkedBlockingQueue<>();
     private static LinkedBlockingQueue<Check> cl = new LinkedBlockingQueue<>();
-    private int nthread;
+//    private int nthread;
 
-    Check(NFA nfa, String s, Object t, boolean f, ForkJoinPool p, int n) {
+    Check(NFA nfa, String s, Object t, ForkJoinPool p, boolean b) {
         this.nfa = nfa;
         query = s;
         state = t;
-        found = new AtomicBoolean(f);
+//        found = new AtomicBoolean(f);
         pool = p;
-        nthread = n;
+        nfa.setResult(b);
+//        nthread = n;
     }
 
-    Check(NFA nfa, String s, Object t, int n) {
+    Check(NFA nfa, String s, Object t) {
         this.nfa = nfa;
         query = s;
         state = t;
-        nthread = n;
+//        nthread = n;
     }
 
     @Override
     protected void compute() {
         discovered.add(query + state);
         if (query.isEmpty() && nfa.final_states().contains(state)) {
-            found.set(true);
+            nfa.setResult(true);
             System.out.println("find!!!!!");
             pool.shutdown();
         } else {
@@ -70,7 +70,7 @@ public class Check extends RecursiveAction {
                 if (!result.isEmpty()) {
                     for (Map.Entry r : result) {
                         if (discovered.contains((String) r.getKey() + r.getValue()) == false) {
-                            Check c = new Check(nfa, (String) r.getKey(), r.getValue(), nthread);
+                            Check c = new Check(nfa, (String) r.getKey(), r.getValue());
                             cl.add(c);
                             /*if (cl.size() > nthread) {
                                 consume();

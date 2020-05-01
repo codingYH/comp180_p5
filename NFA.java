@@ -11,6 +11,7 @@ public class NFA {
   private List<Object> states = new ArrayList<>();
   private HashMap<Object, List<Map.Entry<Character, Object>>> transitions = new HashMap<>();
   private static Lock lock = new ReentrantLock();
+  private boolean result = false;
 
   NFA() {
     makeStart();
@@ -115,11 +116,14 @@ public class NFA {
   }
 
   boolean match(String s, int nthreads) {
-    ForkJoinPool pool = new ForkJoinPool(nthreads);
-    lock.unlock();
-    pool.invoke(new Check(this, s, startState, false, pool, nthreads));
-    boolean r =  Check.found.get();
-    lock.unlock();
-    return r;
+    synchronized (this){
+      ForkJoinPool pool = new ForkJoinPool(nthreads);
+      pool.invoke(new Check(this, s, startState, pool, false));
+      return result;
     }
   }
+
+  public void setResult(boolean b){
+    result = b;
+  }
+}
