@@ -31,8 +31,8 @@ public class Check extends RecursiveTask<Boolean> {
         if (query.isEmpty() && nfa.final_states().contains(state)) {
             return true;
         } else {
-            boolean result = false;
             List<Map.Entry<Character, Object>> trans = nfa.transition(state);
+            List<Check> checks = new ArrayList<>();
             if (trans != null) {
                 if (!query.isEmpty()) {
                     for (Map.Entry e : trans) {
@@ -42,8 +42,7 @@ public class Check extends RecursiveTask<Boolean> {
                                 discovered.add(key);
                                 queue.add(key);
                                 Check next = new Check(nfa, discovered, queue);
-                                invokeAll(next);
-                                result = result || next.join();
+                                checks.add(next);
                             }
                         } else if (e.getKey().equals('#')) {
                             String key = query +"!" + e.getValue();
@@ -51,8 +50,7 @@ public class Check extends RecursiveTask<Boolean> {
                                 discovered.add(key);
                                 queue.add(key);
                                 Check next = new Check(nfa, discovered, queue);
-                                invokeAll(next);
-                                result = result || next.join();
+                                checks.add(next);
                             }
                         }
                     }
@@ -64,12 +62,16 @@ public class Check extends RecursiveTask<Boolean> {
                                 discovered.add(key);
                                 queue.add(key);
                                 Check next = new Check(nfa, discovered, queue);
-                                invokeAll(next);
-                                result = result || next.join();
+                                checks.add(next);
                             }
                         }
                     }
                 }
+            }
+            invokeAll(checks);
+            boolean result = false;
+            for (Check check: checks){
+                result = result || check.join();
             }
             return result;
         }
