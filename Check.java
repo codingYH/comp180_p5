@@ -31,50 +31,46 @@ public class Check extends RecursiveAction {
 
     @Override
     protected void compute() {
-        if (!found.get()) {
-            System.out.println(pool.getRunningThreadCount()+query);
-            discovered.add(query + state);
-            if (query.isEmpty() && nfa.final_states().contains(state)) {
-                found.set(true);
-                System.out.println("find!!!!!");
-                pool.shutdown();
-            } else {
-                List<Map.Entry<String, Object>> result = new ArrayList<>();
-                List<Map.Entry<Character, Object>> trans = nfa.transition(state);
-                if (trans != null) {
-                    if (!query.isEmpty()) {
-                        for (Map.Entry e : trans) {
-                            if (e.getKey().equals(query.charAt(0))) {
-                                String key = query.substring(1, query.length());
-                                Object value = e.getValue();
-                                result.add(Map.entry(key, value));
-                            } else if (e.getKey().equals('#')) {
-                                String key = query;
-                                Object value = e.getValue();
-                                result.add(Map.entry(key, value));
-                            }
-                        }
-                    } else {
-                        for (Map.Entry e : trans) {
-                            if (e.getKey().equals('#')) {
-                                String key = query;
-                                Object value = e.getValue();
-                                result.add(Map.entry(key, value));
-                            }
+//      System.out.println(pool.getRunningThreadCount()+query);
+        discovered.add(query + state);
+        if (query.isEmpty() && nfa.final_states().contains(state)) {
+            found.set(true);
+//          System.out.println("find!!!!!");
+            pool.shutdown();
+        } else {
+            List<Map.Entry<String, Object>> result = new ArrayList<>();
+            List<Map.Entry<Character, Object>> trans = nfa.transition(state);
+            if (trans != null) {
+                if (!query.isEmpty()) {
+                    for (Map.Entry e : trans) {
+                        if (e.getKey().equals(query.charAt(0))) {
+                            String key = query.substring(1, query.length());
+                            Object value = e.getValue();
+                            result.add(Map.entry(key, value));
+                        } else if (e.getKey().equals('#')) {
+                            String key = query;
+                            Object value = e.getValue();
+                            result.add(Map.entry(key, value));
                         }
                     }
-                    if (!result.isEmpty()) {
-                        List<Check> cl = new ArrayList<>();
-                        for (Map.Entry r : result) {
-                            if(discovered.contains((String) r.getKey() + r.getValue()) == false ){
-                                Check c = new Check(nfa, (String) r.getKey(), r.getValue());
-                                cl.add(c);
-                            }
-                        }
-                        if (!found.get()){
-                            invokeAll(cl);
+                } else {
+                    for (Map.Entry e : trans) {
+                        if (e.getKey().equals('#')) {
+                            String key = query;
+                            Object value = e.getValue();
+                            result.add(Map.entry(key, value));
                         }
                     }
+                }
+                if (!result.isEmpty()) {
+                    List<Check> cl = new ArrayList<>();
+                    for (Map.Entry r : result) {
+                        if(discovered.contains((String) r.getKey() + r.getValue()) == false ){
+                            Check c = new Check(nfa, (String) r.getKey(), r.getValue());
+                            cl.add(c);
+                        }
+                    }
+                        invokeAll(cl);
                 }
             }
         }
