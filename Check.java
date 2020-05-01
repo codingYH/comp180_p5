@@ -23,6 +23,7 @@ public class Check extends RecursiveAction {
         state = t;
         pool = p;
         found = new AtomicBoolean(b);
+        cl = new LinkedBlockingQueue<>();
     }
 
     Check(NFA nfa, String s, Object t) {
